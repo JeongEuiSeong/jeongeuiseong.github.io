@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>다람 가계부 초대</title>
+<meta name="description" content="가계부를 함께 쓰자는 초대가 왔어요. 링크를 눌러 다람 가계부에서 참여해 주세요.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="다람 가계부">
+<meta property="og:title" content="다람 가계부 초대">
+<meta property="og:description" content="가계부를 함께 쓰자는 초대가 왔어요. 눌러서 참여해 주세요.">
+<meta property="og:image" content="https://jeongeuiseong.github.io/assets/daram-invite-og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://jeongeuiseong.github.io/daram/invite/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/assets/favicon.png">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+  .invite { text-align: center; }
+  .invite img { width: 96px; height: 96px; border-radius: 22px; margin: 16px 0 8px; }
+  .button { display: block; margin: 12px 0; padding: 14px 20px; border-radius: 14px;
+            background: #ff8a3d; color: #3a1d06; font-weight: 600; text-decoration: none; }
+  .button.secondary { background: var(--tint); color: var(--link); }
+  .button:hover { text-decoration: none; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main class="invite">
+  <img src="/assets/daram-icon.png" alt="다람 가계부 아이콘">
+  <h1>다람 가계부 초대</h1>
+
+  <section id="open" hidden>
+    <p>가계부를 함께 쓰자는 초대가 왔어요.<br>아래 순서대로 참여해 주세요.</p>
+    <div class="card">
+      <p><strong>① 다람 가계부 앱이 없다면 먼저 설치해 주세요.</strong></p>
+      <a class="button secondary" href="https://apps.apple.com/app/id6834307285">App Store에서 받기</a>
+      <p><strong>② 설치한 뒤 아래 버튼을 눌러 참여해 주세요.</strong></p>
+      <a class="button" id="join" href="#">초대 받기</a>
+      <p class="muted" id="until"></p>
+    </div>
+    <p class="muted">iPhone과 iCloud 로그인이 필요해요.</p>
+  </section>
+
+  <section id="expired" hidden>
+    <p>초대 링크가 만료됐어요.<br>초대 링크는 24시간 동안만 열려 있어요. 초대한 사람에게 새 링크를 받아 주세요.</p>
+  </section>
+
+  <section id="invalid" hidden>
+    <p>초대 링크가 올바르지 않아요.<br>초대한 사람에게 링크를 다시 받아 주세요.</p>
+  </section>
+
+  <p><a href="/daram/">다람 가계부 알아보기</a></p>
+</main>
+<footer>© 2026 Euisung Jung</footer>
+<script>
+  // 링크 형식: /daram/invite/#s=<iCloud 공유 토큰>&e=<만료 시각(초)>
+  // 토큰은 #뒤에 있어 서버로 보내지지 않는다. iCloud 주소로만 넘긴다(다른 곳으로 보내지 않음).
+  (function () {
+    var params = new URLSearchParams(location.hash.slice(1));
+    var token = params.get("s") || "";
+    var expires = parseInt(params.get("e") || "", 10);
+    var show = function (id) { document.getElementById(id).hidden = false; };
+    if (!/^[A-Za-z0-9_-]+$/.test(token) || !isFinite(expires)) { show("invalid"); return; }
+    if (Date.now() >= expires * 1000) { show("expired"); return; }
+    document.getElementById("join").href = "https://www.icloud.com/share/" + token;
+    var until = new Date(expires * 1000);
+    document.getElementById("until").textContent =
+      until.toLocaleString("ko-KR", { month: "long", day: "numeric", hour: "numeric", minute: "2-digit" }) + "까지 열려 있어요.";
+    show("open");
+  })();
+</script>
+</body>
+</html>
